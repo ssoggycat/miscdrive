@@ -1,4 +1,4 @@
-<p>this repo powers the image host for the "other cats" drive.</p>
+<p>this repo powers the image host for the other cats drive.</p>
 
 <table>
   <tr>
@@ -16,12 +16,4 @@
   </tr>
 </table>
 
-<p>each top-level folder is one cat's collection. see below for who to credit per folder.</p>
-
-<h4>credits</h4>
-<ul>
-  <li>tina - tbd</li>
-  <li>cleo - tbd</li>
-</ul>
-
-<p>for the drive interface see <a href="https://github.com/ssoggycat/drive-site">ssoggycat/drive-site</a>.</p>
+<p>for the drive interface see <a href="https://github.com/ssoggycat/misc-site">ssoggycat/misc-site</a>.</p>
