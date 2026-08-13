@@ -1,4 +1,6 @@
-<p>this repo powers the image host for the other cats drive.</p>
+<img src=".github/banner.webp" title="&quot;the other cats drive&quot;.">
+
+<p>this repo powers the image host at https://misc-cdn.soggy.cat.</p>
 
 <table>
   <tr>
@@ -7,13 +9,13 @@
     <td><b>thumbnails</b></td>
   </tr>
   <tr>
-    <td>images.json
-        &lt;pages url&gt;/&lt;cat&gt;/*</td>
-    <td>videos.json
-        &lt;pages url&gt;/&lt;cat&gt;/vids/*</td>
-    <td>webp/&lt;cat&gt;/*
-        webp/&lt;cat&gt;/vids/*</td>
+    <td>images.json<br>
+        misc-cdn.soggy.cat/<code>(cat)</code>/*</td>
+    <td>videos.json<br>
+        misc-cdn.soggy.cat/<code>(cat)</code>/vids/*</td>
+    <td>misc-cdn.soggy.cat/webp/<code>(cat)</code>/*<br>
+        misc-cdn.soggy.cat/webp/<code>(cat)</code>/vids/*</td>
   </tr>
 </table>
 
-<p>for the drive interface see <a href="https://github.com/ssoggycat/misc-site">ssoggycat/misc-site</a>.</p>
+<p>for the drive interface see <a href="https://github.com/ssoggycat/miscdrive-site">ssoggycat/miscdrive-site</a>.</p>

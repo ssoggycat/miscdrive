@@ -93,12 +93,20 @@ jobs:
           '
       - name: Make lists
         run: |
+          # {path, sha} objects, sha = git blob hash so the frontend can key comments
+          # by content instead of filename and survive renames automatically
           find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.bmp' \) \
-            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' \
-            | sed 's|^\./||' | jq -nR '[inputs]' > images.json
+            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -print0 \
+            | while IFS= read -r -d '' f; do
+              rel="${f#./}"
+              jq -n --arg path "$rel" --arg sha "$(git hash-object "$f")" '{path:$path, sha:$sha}'
+            done | jq -s '.' > images.json
           find . -type f \( -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mov' -o -iname '*.mkv' \) \
-            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' \
-            | sed 's|^\./||' | jq -nR '[inputs]' > videos.json
+            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -print0 \
+            | while IFS= read -r -d '' f; do
+              rel="${f#./}"
+              jq -n --arg path "$rel" --arg sha "$(git hash-object "$f")" '{path:$path, sha:$sha}'
+            done | jq -s '.' > videos.json
           jq -s 'add' images.json videos.json > all.json
       - name: Setup Pages
         uses: actions/configure-pages@v5
