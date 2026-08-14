@@ -116,11 +116,18 @@ jobs:
               jq -n --arg path "$rel" --arg sha "$(git hash-object "$f")" --argjson size "$(stat -c%s "$f")" '{path:$path, sha:$sha, size:$size}'
             done | jq -s '.' > videos.json
           jq -s 'add' images.json videos.json > all.json
+
+          find . -type f \( -iname 'readme.md' -o -iname '.readme.md' \) \
+            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -print0 \
+            | while IFS= read -r -d '' f; do
+              rel="${f#./}"
+              jq -n --arg path "$rel" --arg sha "$(git hash-object "$f")" --argjson size "$(stat -c%s "$f")" '{path:$path, sha:$sha, size:$size}'
+            done | jq -s '.' > docs.json
       - name: Stage pages deploy
         run: |
           mkdir -p _site
           cp -r webp _site/
-          cp images.json videos.json all.json _site/
+          cp images.json videos.json all.json docs.json _site/
           [ -f CNAME ] && cp CNAME _site/
       - name: Setup Pages
         uses: actions/configure-pages@v5
