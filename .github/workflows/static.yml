@@ -16,7 +16,6 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
@@ -34,7 +33,9 @@ jobs:
       - name: Restore webp cache
         uses: actions/cache@v4
         with:
-          path: webp
+          path: |
+            webp
+            webp-small
           key: webp-${{ github.run_id }}
           restore-keys: |
             webp-
@@ -71,6 +72,38 @@ jobs:
             if ! cwebp -preset photo -mt -quiet -alpha_filter none -noalpha -sharp_yuv -q 70 $cwebp_resize "$src" -o "$out"; then
               ffmpeg -v error -i "$src" $ffmpeg_resize -quality 70 -compression_level 6 "$out"
             fi
+          '
+      - name: Small WebP thumbnails for images
+        run: |
+          mkdir -p webp-small
+          find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.bmp' \) \
+            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -not -path './webp-small/*' -print0 \
+            | xargs -P 4 -0 -I {} bash -euo pipefail -c '
+            src="{}"
+            rel="${src#./}"
+            filename=$(basename "$rel")
+            dir=$(dirname "$rel")
+            out="webp-small/$dir/${filename%.*}.webp"
+            [ -f "$out" ] && exit 0
+            mkdir -p "webp-small/$dir"
+            if ! cwebp -preset photo -mt -quiet -alpha_filter none -noalpha -q 45 -resize 220 0 "$src" -o "$out"; then
+              ffmpeg -v error -i "$src" -vf "scale=220:-1" -quality 45 -compression_level 6 "$out"
+            fi
+          '
+      - name: Small WebP thumbnails for videos
+        run: |
+          mkdir -p webp-small
+          find . -type f \( -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mov' -o -iname '*.mkv' \) \
+            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -not -path './webp-small/*' -print0 \
+            | xargs -P 4 -0 -I {} bash -euo pipefail -c '
+            src="{}"
+            rel="${src#./}"
+            filename=$(basename "$rel")
+            dir=$(dirname "$rel")
+            out="webp-small/$dir/${filename%.*}.webp"
+            [ -f "$out" ] && exit 0
+            mkdir -p "webp-small/$dir"
+            ffmpeg -y -v error -i "$src" -vframes 1 -vf "scale=220:-1" -quality 45 -compression_level 6 "$out"
           '
       - name: WebP thumbnails for videos
         run: |
@@ -127,6 +160,7 @@ jobs:
         run: |
           mkdir -p _site
           cp -r webp _site/
+          cp -r webp-small _site/
           cp images.json videos.json all.json docs.json _site/
           [ -f CNAME ] && cp CNAME _site/
       - name: Setup Pages
