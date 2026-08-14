@@ -116,12 +116,18 @@ jobs:
               jq -n --arg path "$rel" --arg sha "$(git hash-object "$f")" --argjson size "$(stat -c%s "$f")" '{path:$path, sha:$sha, size:$size}'
             done | jq -s '.' > videos.json
           jq -s 'add' images.json videos.json > all.json
+      - name: Stage pages deploy
+        run: |
+          mkdir -p _site
+          cp -r webp _site/
+          cp images.json videos.json all.json _site/
+          [ -f CNAME ] && cp CNAME _site/
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_site'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
