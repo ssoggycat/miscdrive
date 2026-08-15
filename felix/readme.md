@@ -1,2 +1,2 @@
 # Yo
-These are images of my 
+These are images of my grandparents cat, Felix.
