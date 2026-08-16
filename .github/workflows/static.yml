@@ -60,7 +60,7 @@ jobs:
           mkdir -p webp
 
           find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.bmp' \) \
-            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -print0 \
+            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -not -path './webp-small/*' -print0 \
             | xargs -P 4 -0 -I {} bash -euo pipefail -c '
             src="{}"
             rel="${src#./}"
@@ -124,7 +124,7 @@ jobs:
       - name: WebP thumbnails for videos
         run: |
           find . -type f \( -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mov' -o -iname '*.mkv' \) \
-            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -print0 \
+            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -not -path './webp-small/*' -print0 \
             | xargs -P 4 -0 -I {} bash -euo pipefail -c '
             src="{}"
             rel="${src#./}"
@@ -150,16 +150,14 @@ jobs:
           '
       - name: Make lists
         run: |
-          # {path, sha, size} objects: sha = git blob hash so the frontend can key
-          # comments by content and survive renames, size (bytes) so it can show folder totals
           find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.gif' -o -iname '*.webp' -o -iname '*.bmp' \) \
-            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -print0 \
+            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -not -path './webp-small/*' -print0 \
             | while IFS= read -r -d '' f; do
               rel="${f#./}"
               jq -n --arg path "$rel" --arg sha "$(git hash-object "$f")" --argjson size "$(stat -c%s "$f")" '{path:$path, sha:$sha, size:$size}'
             done | jq -s '.' > images.json
           find . -type f \( -iname '*.mp4' -o -iname '*.webm' -o -iname '*.mov' -o -iname '*.mkv' \) \
-            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -print0 \
+            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -not -path './webp-small/*' -print0 \
             | while IFS= read -r -d '' f; do
               rel="${f#./}"
               jq -n --arg path "$rel" --arg sha "$(git hash-object "$f")" --argjson size "$(stat -c%s "$f")" '{path:$path, sha:$sha, size:$size}'
@@ -167,7 +165,7 @@ jobs:
           jq -s 'add' images.json videos.json > all.json
 
           find . -type f \( -iname 'readme.md' -o -iname '.readme.md' \) \
-            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -print0 \
+            -not -path './.git/*' -not -path './.github/*' -not -path './webp/*' -not -path './webp-small/*' -print0 \
             | while IFS= read -r -d '' f; do
               rel="${f#./}"
               jq -n --arg path "$rel" --arg sha "$(git hash-object "$f")" --argjson size "$(stat -c%s "$f")" '{path:$path, sha:$sha, size:$size}'
