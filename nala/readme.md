@@ -1,1 +1,1 @@
-The *orange* one.
+The *orange* one. Nala is the younger sister of the two, always keeping her brother in check due to his chuddiness. She is a huge carpet shark. Loves to fluff everywhere. Hides often, hence the lack of pictures, but when she wants to be seen with people she is super cute and stuff :)
